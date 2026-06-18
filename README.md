@@ -10,7 +10,7 @@
 
 **Repositório acadêmico contendo projetos e trabalhos da disciplina de Arquitetura de Computadores**
 
-Implementação de circuitos digitais e processadores utilizando **Logisim**
+Implementação de circuitos digitais e processadores utilizando **Logisim** e **Verilog**
 
 </div>
 
@@ -18,9 +18,10 @@ Implementação de circuitos digitais e processadores utilizando **Logisim**
 
 ## 📚 Sobre
 
-Este repositório documenta os projetos desenvolvidos durante a disciplina de **Arquitetura de Computadores (AC)**, com foco na implementação de circuitos digitais, processadores e sistemas computacionais básicos.
+Este repositório documenta os projetos desenvolvidos durante a disciplina de **Arquitetura de Computadores (AC)**, com foco na implementação de circuitos digitais, processadores e sistemas computacionais.
 
-O principal projeto é a **construção do processador SAP-1** (Simple As Possible), implementado no simulador Logisim, demonstrando conceitos fundamentais de organização e arquitetura de computadores.
+- **AC1** — Construção do processador **SAP-1** (Simple As Possible) no simulador Logisim.
+- **AC2** — Implementação de um processador **RV32I** (subconjunto da arquitetura RISC-V de 32 bits) em Verilog, com assembler próprio e testbench.
 
 ---
 
@@ -29,25 +30,45 @@ O principal projeto é a **construção do processador SAP-1** (Simple As Possib
 ```
 AC/
 │
-├── 📁 AC1/                           # Arquitetura de Computadores I
-│   ├── SAP.circ                      # Circuito do processador SAP-1 (Logisim)
-│   ├── SAP.mp4                       # Vídeo demonstrativo do funcionamento
-│   └── Trabalho Final - SAP 1.pdf    # Documentação do projeto
+├── 📁 AC1/                                  # Arquitetura de Computadores I
+│   ├── SAP.circ                             # Circuito do processador SAP-1 (Logisim)
+│   ├── SAP.mp4                              # Vídeo demonstrativo do funcionamento
+│   └── Trabalho Final - SAP 1.pdf          # Documentação do projeto
 │
-└── 📄 README.md                      # Este arquivo
+├── 📁 AC2/                                  # Arquitetura de Computadores II
+│   ├── Trabalho Prático - AC2.pdf          # Documentação do projeto RV32I
+│   └── 📁 RV32I/                           # Processador RISC-V RV32I em Verilog
+│       ├── assembler.py                    # Assembler RISC-V escrito em Python
+│       ├── program.hex                     # Programa de teste compilado (hex)
+│       ├── programa_teste.s               # Programa de teste em assembly RISC-V
+│       ├── 📁 src/                         # Módulos Verilog do processador
+│       │   ├── top_processor.v            # Top-level — integração de todos os módulos
+│       │   ├── control_unit.v             # Unidade de controle
+│       │   ├── alu.v                      # Unidade Lógica e Aritmética (ALU)
+│       │   ├── alu_control.v              # Controle da ALU
+│       │   ├── branch_comp.v             # Comparador de desvio (branch)
+│       │   ├── imm_gen.v                  # Gerador de imediatos
+│       │   ├── reg_file.v                 # Banco de registradores (32 × 32 bits)
+│       │   ├── pc.v                       # Program Counter
+│       │   ├── instr_mem.v               # Memória de instruções
+│       │   └── data_mem.v                # Memória de dados
+│       └── 📁 tb/                          # Testbench
+│           └── tb_top_processor.v        # Testbench do processador completo
+│
+└── 📄 README.md                             # Este arquivo
 ```
 
 ---
 
-## 💻 Projeto Principal:  Processador SAP-1
+## 💻 AC1 — Processador SAP-1
 
-### 📌 O que é o SAP-1? 
+### 📌 O que é o SAP-1?
 
 O **SAP-1 (Simple As Possible - 1)** é um processador didático de 8 bits projetado para ensinar os fundamentos da arquitetura de computadores. Ele possui:
 
 - **Largura de dados**: 8 bits
 - **Arquitetura**: Von Neumann simplificada
-- **Conjunto de instruções**:  Reduzido (RISC-like)
+- **Conjunto de instruções**: Reduzido (RISC-like)
 - **Componentes principais**:
   - Program Counter (PC)
   - Memory Address Register (MAR)
@@ -58,37 +79,71 @@ O **SAP-1 (Simple As Possible - 1)** é um processador didático de 8 bits proje
   - Output Register
   - Control Unit
 
-### 🔧 Implementação
+### 📊 Conjunto de Instruções — SAP-1
 
-O processador foi implementado no **Logisim**, um simulador de circuitos digitais educacional que permite: 
-- Visualização do funcionamento de cada componente
-- Simulação passo a passo da execução de instruções
-- Análise do fluxo de dados entre os módulos
+| Instrução | Operação |
+|:---------:|:---------|
+| **LDA** | Carrega dados da memória para o acumulador |
+| **ADD** | Soma o valor da memória com o acumulador |
+| **SUB** | Subtrai o valor da memória do acumulador |
+| **OUT** | Envia o valor do acumulador para a saída |
+| **HLT** | Para a execução do programa |
 
-### 📊 Conjunto de Instruções
+### 🔧 Ferramenta
 
-O SAP-1 possui um conjunto reduzido de instruções para operações básicas: 
-- **LDA** (Load): Carrega dados da memória para o acumulador
-- **ADD** (Add): Soma o valor da memória com o acumulador
-- **SUB** (Subtract): Subtrai o valor da memória do acumulador
-- **OUT** (Output): Envia o valor do acumulador para a saída
-- **HLT** (Halt): Para a execução do programa
+O processador foi implementado no **Logisim**, um simulador de circuitos digitais educacional que permite visualização passo a passo da execução de instruções e do fluxo de dados entre os módulos.
 
-### 🎥 Demonstração
+---
 
-O repositório inclui um vídeo (`SAP.mp4`) demonstrando:
-- Funcionamento do processador
-- Execução de programas de exemplo
-- Análise do comportamento dos sinais de controle
+## 💻 AC2 — Processador RV32I (RISC-V)
+
+### 📌 O que é o RV32I?
+
+O **RV32I** é o conjunto base de instruções inteiras de 32 bits da arquitetura **RISC-V**, uma ISA aberta e modular amplamente utilizada em pesquisa e indústria. Características:
+
+- **Largura de dados**: 32 bits
+- **Arquitetura**: RISC (Reduced Instruction Set Computer)
+- **Banco de registradores**: 32 registradores de propósito geral (x0–x31)
+- **Tipos de instrução**: R, I, S, B, U, J
+- **Pipeline**: Implementação monociclo (single-cycle)
+
+### 🔧 Módulos Implementados em Verilog
+
+| Módulo | Descrição |
+|:------:|:----------|
+| `top_processor.v` | Integração de todos os componentes |
+| `control_unit.v` | Geração de sinais de controle a partir do opcode |
+| `alu.v` | Operações aritméticas e lógicas (ADD, SUB, AND, OR, XOR, SLT, etc.) |
+| `alu_control.v` | Decodifica funct3/funct7 para operação da ALU |
+| `branch_comp.v` | Comparações para instruções de desvio (BEQ, BNE, BLT, BGE…) |
+| `imm_gen.v` | Extensão de sinal para imediatos de todos os formatos |
+| `reg_file.v` | Banco de 32 registradores de 32 bits (x0 fixo em zero) |
+| `pc.v` | Program Counter com atualização a cada ciclo |
+| `instr_mem.v` | Memória de instruções (carrega arquivo `.hex`) |
+| `data_mem.v` | Memória de dados com leitura e escrita |
+
+### 🐍 Assembler Python
+
+O projeto inclui um **assembler próprio** (`assembler.py`) escrito em Python que converte programas Assembly RISC-V (`.s`) para o formato hexadecimal (`.hex`) utilizado pelo simulador Verilog.
+
+```bash
+python assembler.py programa_teste.s
+```
+
+### 🧪 Testbench
+
+O arquivo `tb/tb_top_processor.v` contém o testbench que executa o programa compilado (`program.hex`) e verifica o comportamento do processador ao longo dos ciclos de clock.
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
 | Ferramenta | Uso |
-|: ----------:|:----|
-| 🔌 **Logisim** | Simulação de circuitos digitais e implementação do SAP-1 |
-| 📄 **PDF** | Documentação técnica do projeto |
+|:-----------:|:----|
+| 🔌 **Logisim** | Simulação de circuitos digitais — SAP-1 (AC1) |
+| 📟 **Verilog (HDL)** | Implementação do processador RV32I (AC2) |
+| 🐍 **Python** | Assembler RISC-V para geração de `.hex` |
+| 📄 **PDF** | Documentação técnica dos projetos |
 | 🎬 **Git LFS** | Gerenciamento de arquivos grandes (vídeo e PDF) |
 
 ---
@@ -96,33 +151,33 @@ O repositório inclui um vídeo (`SAP.mp4`) demonstrando:
 ## 📖 Conceitos Abordados
 
 ### Arquitetura de Computadores
-- ✅ Organização de processadores
+- ✅ Organização de processadores (SAP-1 e RV32I)
 - ✅ Ciclo de busca-decodificação-execução (Fetch-Decode-Execute)
-- ✅ Unidade de controle e sinais de controle
+- ✅ Arquitetura Von Neumann e RISC
+- ✅ ISA RISC-V — tipos de instrução R, I, S, B, U, J
 - ✅ Barramento de dados, endereços e controle
-- ✅ Arquitetura Von Neumann
 
-### Circuitos Digitais
-- ✅ Portas lógicas (AND, OR, NOT, XOR)
-- ✅ Registradores e flip-flops
+### Circuitos Digitais & HDL
+- ✅ Portas lógicas, registradores e flip-flops
 - ✅ Multiplexadores e decodificadores
-- ✅ Unidade Lógica e Aritmética (ALU)
-- ✅ Memória RAM
+- ✅ Descrição de hardware em Verilog
+- ✅ Simulação com testbench
 
 ### Microarquitetura
 - ✅ Datapath (caminho de dados)
 - ✅ Control Unit (unidade de controle)
-- ✅ Microprogramação
+- ✅ Geração de imediatos (Immediate Generator)
+- ✅ Desvios condicionais e incondicionais (Branch / Jump)
 - ✅ Temporização e clock
 
 ---
 
 ## 📚 Material de Referência
 
-O trabalho foi baseado em conceitos de:
-- **Arquitetura de Computadores** por William Stallings
-- **Computer Organization and Design** (Patterson & Hennessy)
-- **Digital Design and Computer Architecture** (Harris & Harris)
+- **Computer Organization and Design RISC-V Edition** — Patterson & Hennessy
+- **Digital Design and Computer Architecture** — Harris & Harris
+- **Arquitetura de Computadores** — William Stallings
+- [RISC-V ISA Specification](https://riscv.org/technical/specifications/)
 
 ---
 
@@ -135,7 +190,7 @@ O trabalho foi baseado em conceitos de:
 
 ## 📄 Licença
 
-Este repositório é destinado exclusivamente a **fins educacionais** e acadêmicos. 
+Este repositório é destinado exclusivamente a **fins educacionais** e acadêmicos.
 
 ---
 
